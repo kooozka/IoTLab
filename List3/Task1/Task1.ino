@@ -25,58 +25,58 @@ pinMode(GREEN_BUTTON, INPUT_PULLUP);
 
 #define DEBOUNCE_PERIOD 10UL
 
-bool isGreenButtonPressed() {
-static int debounced_button_state = HIGH;
-static int previous_reading = HIGH;
-static unsigned long last_change_time = 0UL;
-bool isPressed = false;
-
-int current_reading = digitalRead(GREEN_BUTTON);
-
-if (previous_reading != current_reading) {
-last_change_time = millis();
-}
-
-if (millis() - last_change_time > DEBOUNCE_PERIOD) {
-  if (current_reading != debounced_button_state)
-  {
-    if (debounced_button_state == HIGH && current_reading == LOW) {
-      isPressed = true;
-    }
-  debounced_button_state = current_reading;
-  }
-}
-
-previous_reading = current_reading;
-
-return isPressed;
-}
-
 bool isGreenButtonReleased() {
-static int debounced_button_state = LOW;
-static int previous_reading = LOW;
-static unsigned long last_change_time = 0UL;
-bool isReleased = false;
+  static int debounced_button_state = LOW;
+  static int previous_reading = LOW;
+  static unsigned long last_change_time = 0UL;
+  bool isReleased = false;
 
-int current_reading = digitalRead(GREEN_BUTTON);
+  int current_reading = digitalRead(GREEN_BUTTON);
 
-if (previous_reading != current_reading) {
-last_change_time = millis();
-}
-
-if (millis() - last_change_time > DEBOUNCE_PERIOD) {
-  if (current_reading != debounced_button_state)
-  {
-    if (debounced_button_state == LOW && current_reading == HIGH) {
-      isReleased = true;
-    }
-  debounced_button_state = current_reading;
+  if (previous_reading != current_reading) {
+    last_change_time = millis();
   }
+
+  if (millis() - last_change_time > DEBOUNCE_PERIOD) {
+    if (current_reading != debounced_button_state)
+    {
+      if (debounced_button_state == LOW && current_reading == HIGH) {
+        isReleased = true;
+      }
+    debounced_button_state = current_reading;
+    }
+  }
+
+  previous_reading = current_reading;
+
+  return isReleased;
 }
 
-previous_reading = current_reading;
+bool isRedButtonReleased() {
+  static int debounced_button_state = LOW;
+  static int previous_reading = LOW;
+  static unsigned long last_change_time = 0UL;
+  bool isReleased = false;
 
-return isReleased;
+  int current_reading = digitalRead(RED_BUTTON);
+
+  if (previous_reading != current_reading) {
+    last_change_time = millis();
+  }
+
+  if (millis() - last_change_time > DEBOUNCE_PERIOD) {
+    if (current_reading != debounced_button_state)
+    {
+      if (debounced_button_state == LOW && current_reading == HIGH) {
+        isReleased = true;
+      }
+    debounced_button_state = current_reading;
+    }
+  }
+
+  previous_reading = current_reading;
+
+  return isReleased;
 }
 
 
@@ -85,17 +85,12 @@ void setup() {
   initButtons();
 }
 
-int led_index = 0;
-bool buttonPressed = false;
+int led_index = 2;
 
 void loop() {
-  if (isGreenButtonPressed()) {
-    buttonPressed = true;
-  } 
-  if (isGreenButtonReleased() && buttonPressed) {
+  if (isGreenButtonReleased() || isRedButtonReleased()) {
     digitalWrite(led[led_index], LOW);
     led_index = ++led_index % 3;
     digitalWrite(led[led_index], HIGH);
-    buttonPressed = false;
   }
 }

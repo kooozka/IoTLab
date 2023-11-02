@@ -110,12 +110,14 @@ void loop(){
   if (!stopped) {
     lcd.setCursor(0, 0);
     lcd.print(millis()/1000 - timePassed/1000);
+    lcd.print("s.");
   }
-  if (!stopped && isRedButtonPressed()) {
+  if (isRedButtonPressed()) {
     lcd.clear();
     lcd.setCursor(0, 0);
     timePassed = millis();
     lcd.print(millis()/1000 - timePassed/1000);
+    lcd.print("s.");
     stopped = true;
     reset = true;
   }

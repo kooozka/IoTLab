@@ -10,22 +10,22 @@
 
 int led[] = {LED_RED, LED_GREEN, LED_BLUE};
 void initRGB() {
-pinMode(LED_BUILTIN, OUTPUT);
-digitalWrite(LED_BUILTIN, LOW);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
 
-pinMode(LED_RED, OUTPUT);
-digitalWrite(LED_RED, LOW);
+  pinMode(LED_RED, OUTPUT);
+  digitalWrite(LED_RED, LOW);
 
-pinMode(LED_GREEN, OUTPUT);
-digitalWrite(LED_GREEN, LOW);
+  pinMode(LED_GREEN, OUTPUT);
+  digitalWrite(LED_GREEN, LOW);
 
-pinMode(LED_BLUE, OUTPUT);
-digitalWrite(LED_BLUE, LOW);
+  pinMode(LED_BLUE, OUTPUT);
+  digitalWrite(LED_BLUE, LOW);
 }
 
 void initButtons() {
-pinMode(RED_BUTTON, INPUT_PULLUP);
-pinMode(GREEN_BUTTON, INPUT_PULLUP);
+  pinMode(RED_BUTTON, INPUT_PULLUP);
+  pinMode(GREEN_BUTTON, INPUT_PULLUP);
 }
 
 void changeLedState(int pin) {
