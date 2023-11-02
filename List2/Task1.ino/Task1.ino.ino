@@ -5,7 +5,7 @@
 #define RED_BUTTON 2
 #define GREEN_BUTTON 4
 
-int state = LOW;
+bool on = false;
 
 void initRGB() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -39,7 +39,6 @@ void changeColor() {
     digitalWrite(LED_BLUE, LOW);
     digitalWrite(LED_RED, HIGH);
   }
-  delay(100);
 }
 
 void setup() {
@@ -48,22 +47,22 @@ void setup() {
 }
 
 void loop() {
-  if (state == HIGH){
+  if (on){
     if (digitalRead(GREEN_BUTTON) == LOW) {
       changeColor();
     }
-    if (digitalRead(RED_BUTTON) == LOW) {
+    else if (digitalRead(RED_BUTTON) == LOW) {
       digitalWrite(LED_RED, LOW);
       digitalWrite(LED_GREEN, LOW);
       digitalWrite(LED_BLUE, LOW);
-      state = LOW;
+      on = false;
     }
   }
   else {
     if (digitalRead(RED_BUTTON) == LOW) {
       digitalWrite(LED_RED, HIGH);
-      state = HIGH;
+      on = true;
     }
   }
-  delay(100);
+  delay(200);
 }

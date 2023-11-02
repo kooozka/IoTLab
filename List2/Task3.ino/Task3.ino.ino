@@ -1,18 +1,15 @@
 #define LED_RED 6
-#define LED_GREEN 5
+#define LED_GREEN 5 
 #define LED_BLUE 3
-#define DELAY 300
 
-void changeColor(int red, int green, int blue) {
-  analogWrite(LED_RED, red);
-  analogWrite(LED_GREEN, green);
-  analogWrite(LED_BLUE, blue);
-  delay(DELAY);
-}
 
-void setup() {
+
+void initLeds() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
+
   pinMode(LED_RED, OUTPUT);
-  digitalWrite(LED_RED, LOW);
+  digitalWrite(LED_RED, HIGH);
 
   pinMode(LED_GREEN, OUTPUT);
   digitalWrite(LED_GREEN, LOW);
@@ -21,11 +18,24 @@ void setup() {
   digitalWrite(LED_BLUE, LOW);
 }
 
+void changeColor(int color, int prev_color) {
+  for (int i = 0; i <= 255; i++) {
+    analogWrite(color, i);
+    analogWrite(prev_color, 255 - i);
+    delay(10);
+  }
+}
+
+void setup() {
+  initLeds();
+  analogWrite(LED_RED, 255);
+}
+
 void loop() {
-  changeColor(255, 0, 0);
-  changeColor(255,255,0);
-  changeColor(0, 255, 0);
-  changeColor(0, 255, 255);
-  changeColor(0, 0, 255);
-  changeColor(255, 0, 255);
+  changeColor(LED_RED, LED_BLUE);
+  delay(1000);
+  changeColor(LED_GREEN, LED_RED);
+  delay(1000);
+  changeColor(LED_BLUE, LED_GREEN);
+  delay(1000);
 }

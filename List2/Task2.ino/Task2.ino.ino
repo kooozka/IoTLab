@@ -18,7 +18,7 @@ void loop() {
       value += 1;
     }
   }
-  if (digitalRead(RED_BUTTON) == LOW) {
+  else if (digitalRead(RED_BUTTON) == LOW) {
     if (value > 0) {
       value -= 1;
     }
