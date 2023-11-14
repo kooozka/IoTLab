@@ -1,0 +1,18 @@
+{
+    "name": "RGBLedControl",
+    "keywords": "led, colors",
+    "description": "Arduino Library for IoT Laboratory",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://example.com/RGBLedControl",       "name": "Wojciech Dominiak",
+            "email": "266537@student.pwr.edu.pl",
+            "url": "http://john.smith.example.com",
+            "maintainer": true
+        }
+    ],
+    "version": "1.0.0",
+    "homepage": "hhttps://example.com/RGBLedControl",
+    "frameworks": "arduino",
+    "platforms": "*"
+}
