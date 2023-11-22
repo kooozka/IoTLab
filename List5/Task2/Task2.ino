@@ -146,6 +146,55 @@ int diod_by_option(int option)
   }
 }
 
+int redValue = 0;
+int greenValue = 0;
+int blueValue = 0;
+
+int colorByOption(int option) {
+  if (option == 0)
+  {
+    return redValue;
+  }
+  else if (option == 1)
+  {
+    return greenValue;    
+  }
+  else
+  {
+    return blueValue;
+  }
+}
+
+void increaseColorValue(int option) {
+  if (option == 0)
+  {
+    redValue += 15;
+  }
+  else if (option == 1)
+  {
+    greenValue += 15;    
+  }
+  else
+  {
+    blueValue += 15;
+  }
+}
+
+void decreaseColorValue(int option) {
+  if (option == 0)
+  {
+    redValue -= 15;
+  }
+  else if (option == 1)
+  {
+    greenValue -= 15;    
+  }
+  else
+  {
+    blueValue -= 15;
+  }
+}
+
 volatile bool menuMode = true;
 volatile int encoder1 = HIGH;
 volatile int encoder2 = HIGH;
@@ -156,6 +205,7 @@ ISR(PCINT1_vect) {
   encoder2 = digitalRead(ENCODER2);
   encoderTimestamp = millis();
 }
+
 
 int chosen_option;
 int encoderValue = 0;
@@ -193,7 +243,7 @@ void loop() {
       chosen_option = encoderValue;
       lcd.clear();
       encoderValue = 0;
-      change_intensity(diod_by_option(chosen_option), encoderValue); //tu mozna dawac value dla kazdego kolorku
+      change_intensity(diod_by_option(chosen_option), colorByOption(chosen_option)); //tu mozna dawac value dla kazdego kolorku
     }
   } 
   if (!menuMode)
@@ -202,17 +252,17 @@ void loop() {
     {
       if (en2 == HIGH) 
       {
-        if (encoderValue < 255)
-          encoderValue += 15;
+        if (colorByOption(chosen_option) < 255)
+          increaseColorValue(chosen_option);
       } 
       else 
       {
-        if (encoderValue > 0)
-          encoderValue -= 15;
+        if (colorByOption(chosen_option) > 0)
+          decreaseColorValue(chosen_option);
       }
       lastChangeTimestamp = timestamp;
 
-      change_intensity(diod_by_option(chosen_option), encoderValue);
+      change_intensity(diod_by_option(chosen_option), colorByOption(chosen_option));
     }
     lastEn1 = en1;
     if (isRedButtonPressed()) {
