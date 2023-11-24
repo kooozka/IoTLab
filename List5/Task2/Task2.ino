@@ -16,6 +16,12 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+void initLCD() {
+  lcd.init();
+  lcd.clear();
+  lcd.backlight();
+}
+
 void printResults(int val) 
 {
   char buffer[40];
@@ -44,11 +50,6 @@ void menu(int val) {
   }
 }
 
-void change_intensity(int diod, int val) {
-  printResults(val);
-  analogWrite(diod, val);
-}
-
 void setup() {
   pinMode(LED_RED, OUTPUT);
   digitalWrite(LED_RED, LOW);
@@ -65,22 +66,21 @@ void setup() {
   pinMode(RED_BUTTON, INPUT_PULLUP);
   pinMode(GREEN_BUTTON, INPUT_PULLUP);
 
-  lcd.init();
-  lcd.backlight();
+  initLCD();
   menu(0);
 
   PCICR |= (1 << PCIE1);
   PCMSK1 |= (1 << PCINT10);
 }
 
-bool isRedButtonPressed() 
+bool isButtonPressed(int buttonPin) 
 {
   static int debounced_button_state = HIGH;
   static int previous_reading = HIGH;
   static unsigned long last_change_time = 0UL;
   bool isPressed = false;
 
-  int current_reading = digitalRead(RED_BUTTON);
+  int current_reading = digitalRead(buttonPin);
 
   if (previous_reading != current_reading) 
   {
@@ -101,120 +101,60 @@ bool isRedButtonPressed()
   return isPressed;
 }
 
-
-  bool isGreenButtonPressed() 
-{
-  static int debounced_button_state = HIGH;
-  static int previous_reading = HIGH;
-  static unsigned long last_change_time = 0UL;
-  bool isPressed = false;
-
-  int current_reading = digitalRead(GREEN_BUTTON);
-
-  if (previous_reading != current_reading) 
-  {
-    last_change_time = millis();
-  }
-
-  if (millis() - last_change_time > DEBOUNCE_PERIOD) {
-    if (current_reading != debounced_button_state) {
-      if (debounced_button_state == HIGH && current_reading == LOW) {
-        isPressed = true;
-      }
-      debounced_button_state = current_reading;
-    }
-  }
-
-  previous_reading = current_reading;
-
-  return isPressed;
+bool isRedButtonPressed() {
+  return isButtonPressed(RED_BUTTON);
 }
 
-int diod_by_option(int option)
+bool isGreenButtonPressed() {
+  return isButtonPressed(GREEN_BUTTON);
+}
+
+void changeIntensity(int diod, int val) {
+  printResults(val);
+  analogWrite(diod, val);
+}
+
+int diodByOption(int option)
 {
-  if (option == 0)
-  {
-    return 6;
-  }
-  else if (option == 1)
-  {
-    return 5;    
-  }
-  else
-  {
-    return 3;
-  }
+  int diodPins[] = {LED_RED, LED_GREEN, LED_BLUE};
+  return diodPins[option];
 }
 
 int redValue = 0;
 int greenValue = 0;
 int blueValue = 0;
+int colors[] = {redValue, greenValue, blueValue};
 
 int colorByOption(int option) {
-  if (option == 0)
-  {
-    return redValue;
-  }
-  else if (option == 1)
-  {
-    return greenValue;    
-  }
-  else
-  {
-    return blueValue;
-  }
+  return colors[option];
 }
 
 void increaseColorValue(int option) {
-  if (option == 0)
-  {
-    redValue += 15;
-  }
-  else if (option == 1)
-  {
-    greenValue += 15;    
-  }
-  else
-  {
-    blueValue += 15;
-  }
+  colors[option] += 15;
 }
 
 void decreaseColorValue(int option) {
-  if (option == 0)
-  {
-    redValue -= 15;
-  }
-  else if (option == 1)
-  {
-    greenValue -= 15;    
-  }
-  else
-  {
-    blueValue -= 15;
-  }
+  colors[option] -= 15;
 }
 
-volatile bool menuMode = true;
+
 volatile int encoder1 = HIGH;
 volatile int encoder2 = HIGH;
 volatile unsigned long encoderTimestamp = 0UL;
-
 ISR(PCINT1_vect) {
   encoder1 = digitalRead(ENCODER1);
   encoder2 = digitalRead(ENCODER2);
   encoderTimestamp = millis();
 }
 
-
+/*volatile*/ bool menuMode = true;
 int chosen_option;
 int encoderValue = 0;
 int lastEn1 = LOW;
 unsigned long lastChangeTimestamp = 0UL;
 
 void loop() {
-  int en1;
-  int en2;
+  int en1, en2;
   unsigned long timestamp;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -237,13 +177,13 @@ void loop() {
 
       menu(encoderValue);
     }
-    lastEn1 = en1;
+    //lastEn1 = en1;
     if (isGreenButtonPressed()) {
       menuMode = false;
       chosen_option = encoderValue;
       lcd.clear();
       encoderValue = 0;
-      change_intensity(diod_by_option(chosen_option), colorByOption(chosen_option)); //tu mozna dawac value dla kazdego kolorku
+      changeIntensity(diodByOption(chosen_option), colorByOption(chosen_option));
     }
   } 
   if (!menuMode)
@@ -262,9 +202,9 @@ void loop() {
       }
       lastChangeTimestamp = timestamp;
 
-      change_intensity(diod_by_option(chosen_option), colorByOption(chosen_option));
+      changeIntensity(diodByOption(chosen_option), colorByOption(chosen_option));
     }
-    lastEn1 = en1;
+    //lastEn1 = en1;
     if (isRedButtonPressed()) {
       menuMode = true;
       lcd.clear();

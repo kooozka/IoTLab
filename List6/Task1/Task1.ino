@@ -49,10 +49,10 @@ void updateTemperatures() {
   checkTemperatureOut(tempOut);
 
   char buffer[40];
-  sprintf(buffer, "Temp  IN%8s", String(tempIn, 4).c_str());
+  sprintf(buffer, "Temp  IN%8s", String(tempIn, 2).c_str());
   lcd.setCursor(0, 0);
   lcd.print(buffer);
-  sprintf(buffer, "Temp OUT%8s", String(tempOut, 4).c_str());
+  sprintf(buffer, "Temp OUT%8s", String(tempOut, 2).c_str());
   lcd.setCursor(0, 1);
   lcd.print(buffer);
 
@@ -64,12 +64,18 @@ void changeColor(float temperatureOut) {
   const float comfortZoneMax = 25.0;
 
   if (temperatureOut < comfortZoneMin) {
+    analogWrite(LED_RED, 0);
+    analogWrite(LED_GREEN, 0);
     analogWrite(LED_BLUE, 255);
   }
   else if (temperatureOut > comfortZoneMax) {
+    analogWrite(LED_BLUE, 0);
+    analogWrite(LED_GREEN, 0);
     analogWrite(LED_RED, 255);
   }
   else {
+    analogWrite(LED_BLUE, 0);
+    analogWrite(LED_RED, 0);
     analogWrite(LED_GREEN, 255);
   }
 }
@@ -88,5 +94,5 @@ void setup()
 void loop()
 {
     updateTemperatures();
-    delay(3000);
+    delay(1000);
 }
